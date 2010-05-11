@@ -24,6 +24,7 @@
 %-include("rackspace.hrl").
 -define(NAMESPACE, "http://docs.rackspacecloud.com/servers/api/v1.0").
 -define(LNM, 50).
+%Keys = rs_keys:new(Uname,Pass).
 
 describe_all(Keys) ->
 	Response = rs_util:send_request(Keys,get,"/servers",[]),
@@ -99,7 +100,7 @@ run(Keys,Name,Image,Size,MetaData,Files)->
 	Resp = rs_util:send_lhttpc_request(Keys,post,"/servers",Body),
 	{ok,{_,_,RBody}} = Resp,
 	{struct,[{_,{struct,Props}}]} = mochijson:decode(RBody),
-	{ok,Props}.
+	{ok,clean_address(Props)}.
 
 files_to_json([])->[];
 files_to_json(Files) when length(Files) >0 ->
@@ -166,12 +167,12 @@ create_backup_schedule(Keys,InstanceId,IsEnabled,WeekDay,Hour)->
 	rs_util:send_lhttpc_request(Keys,post,"/servers/"++InstanceId++"/backup_schedule",Body).
 
 %/servers/id/backup_schedule
-%disable_backup_schedule("12345").
+%disable_backup_schedule(Keys,"12345").
 disable_backup_schedule(Keys,InstanceId)->
 	rs_util:send_request(Keys,delete,"/servers/"++InstanceId++"/backup_schedule",[]).
 
 %{"server" :{"name" : "new-server-test","adminPass" : "newPassword"}}
-%update_server_name("new_name","12345").
+%update_server_name(Keys,"new_name","12345").
 update_server_name(Keys,NewName,InstanceId)->
 	J2 = {struct,[{<<"name">>,NewName}]},
 	Js = {struct,[{<<"server">>,J2}]},
@@ -227,7 +228,16 @@ parse_describes(Body)->
 
 parse_describes_detail(Body)->
 	 {struct, [{_,{_,X}}]} = mochijson:decode(Body),
-	 [Y||{_,Y}<-X].	
+	 L = [Y||{_,Y}<-X],
+	 [clean_address(Z)||Z<-L].
+
+clean_address(Info)->
+	Addr = proplists:get_value("addresses",Info),
+	{_,[{Pb,{_,V}},{Pr,{_,V1}}]}=Addr,
+	NewT = {"addresses",[{Pb,V},{Pr,V1}]},
+	lists:keyreplace("addresses",1,Info,NewT).
+
+	
 	    
 %drop_empty(I) ->
 %	length(I) > 0.
