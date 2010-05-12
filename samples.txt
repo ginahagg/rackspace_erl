@@ -1,0 +1,163 @@
+1> Keys = rs_keys:new("uname","pwd").
+{rs_keys,"uname","pwd"}
+%{
+%"server" : {
+%"name" : "new-server-test","imageId" : 2,"flavorId" : 1,
+%"metadata" : {"My Server Name" : "Apache1"},
+%"personality" : [{"path" : "/etc/banner.txt",
+%"contents" : "ICAgICAgDQoiQSBjbG91ZCBkb2VzIG5vdCBrbm93IHdoeSBpdCBtb3ZlcyBpbiBqdXN0IHN1Y2ggYSBkaXJlY3Rpb24gYW5kIGF0IHN1Y2ggYSBzcGVlZC4uLkl0IGZZWxzIGFuIGltcHVsc2lvbi4uLnRoaXMgaXMgdGhlIHBsYWNlIHRvIGdvIG5vdy4gQnV0IHRoZSBza3kga25vd3MgdGhlIHJlYXNvbnMgYW5kIHRoZSBwYXR0ZXJucyBZWhpbmQgYWxsIGNsb3VkcywgYW5kIHlvdSB3aWxsIGtub3csIHRvbywgd2hlbiB5b3UgbGlmdCB5b3Vyc2VsZiBoaWdoIGVub3VnaCB0byBzZWUgYmV5b25kIGhvcmlb25zLiINCg0KLVJpY2hhcmQgQmFjaA=="
+%}]}}
+2> L = rs_instance:run(Keys,"gina5113",8,1,[{"my server name","gina5113"},{"size","1"}],[{"etc/junk2",atom_to_list(node())}]).
+{ok,[{"progress",0},
+     {"id",219961},
+     {"imageId",8},
+     {"flavorId",1},
+     {"status","BUILD"},
+     {"adminPass","gina5113fxxxxxx"},
+                         {"name","gina5113"},
+                         {"hostId","3ecb25xxxxxxxx"},
+                         {"addresses",
+                          [{"public",["173.203.81.xx"]},
+                           {"private",["10.179.91.xxx"]}]},
+                         {"metadata",
+                          {struct,[{"my server name","gina5113"},
+                                   {"size","1"}]}}]}
+3> rs_instance:describe_all_details(Keys).                                      
+[[{"progress",100},                           
+  {"id",219900},
+  {"imageId",8},
+  {"flavorId",1},
+  {"status","ACTIVE"},
+  {"name","gina5111"},
+  {"hostId","f1a28c95f95bbc5342d04050daxxxx"},
+  {"addresses",
+   [{"public",["173.203.78.xx"]},
+    {"private",["10.179.91.xxx"]}]},
+  {"metadata",
+   {struct,[{"my server name","gina5111"},{"size","1"}]}}],
+ [{"progress",100},
+  {"id",219909},
+  {"imageId",8},
+  {"flavorId",1},
+  {"status","ACTIVE"},
+  {"name","gina5112"},
+  {"hostId","95c5e2e301557e12429aea74617xxxxx"},
+  {"addresses",
+   [{"public",["173.203.84.xx"]},
+    {"private",["10.179.91.xxx"]}]},
+  {"metadata",
+   {struct,[{"my server name","gina5112"},{"size","1"}]}}],
+ [{"progress",100},
+  {"id",219333},
+  {"imageId",8},
+  {"flavorId",1},
+  {"status","ACTIVE"},
+  {"name","gina5113"},
+  {"hostId","3ecb258272b08ce6d2d836e1a22dxxxx"},
+  {"addresses",
+   [{"public",["173.203.81.xx"]},
+    {"private",["10.179.91.xxx"]}]},
+  {"metadata",
+   {struct,[{"my server name","gina5113"},{"size","1"}]}}]]
+  
+RebootType: SOFT|HARD
+rs_instance:reboot(Keys,"123333",SOFT)
+%reboot(Keys,InstanceId,RebootType).
+
+%{"rebuild" : {"imageId" : 2}}
+rs_instance:rebuild(Keys,"12333",2)
+rebuild(Keys,InstanceId,ImageId)
+
+%{"resize" : {"flavorId" : 3}}
+rs_instance:resize(Keys,"12233",3).
+resize(Keys,InstanceId,FlavorId).
+
+%{"confirmResize" : null}
+rs_instance:confirm_resized(Keys,"12333").
+confirm_resized(Keys,InstanceId)->
+
+%{"revertResize" : null}
+rs_instance:revert_resized(Keys,"12345").
+revert_resized(Keys,InstanceId)->
+	
+%rs_instance:list_addresses(Keys,"12345")
+list_addresses(Keys,InstanceId)->
+
+rs_instance:list_public_addresses(Keys,"12345").
+%list_public_addresses(Keys,InstanceId).
+
+%{"shareIp" : {"sharedIpGroupId" : 1234,"configureServer" : true}}
+rs_instance:share_ip_address(Keys,"12345", 1234)
+%share_ip_address(Keys,InstanceId, SharedIpGroupId).
+
+rs_instance:unshare_ip_address(Keys,"1223344", "168.xx.xxx").
+%unshare_ip_address(Keys,InstanceId, Address)
+
+rs:instance:shared_ip_groups(Keys)->
+
+%{"sharedIpGroup" : {"name" : "Shared IP Group 1","server" : 422}}
+rs_instance:create_shared_ip_group(Keys,"test_share_gp")
+%create_shared_ip_group(Keys,SharedGpName)
+
+%String GroupId
+rs_instance:terminate_shared_group(Keys,"123").
+%terminate_shared_group(Keys,GroupId)->
+	
+
+%String InstanceId
+rs_instance:list_backup_schedules(Keys,"12345").
+%list_backup_schedules(Keys,InstanceId)->
+
+%/servers/id/backup_schedule{"backupSchedule" : {"enabled" : true,"weekly" : "THURSDAY","daily" : "H_0400_0600"}}
+rs_instance:create_backup_schedule("12345",true,"THURSDAY","H_0400_0600").
+%create_backup_schedule(Keys,InstanceId,IsEnabled,WeekDay,Hour)->
+	
+rs_instance:disable_backup_schedule(Keys,"12345").
+%disable_backup_schedule(Keys,InstanceId)->
+
+%{"server" :{"name" : "new-server-test","adminPass" : "newPassword"}}
+rs_instance:update_server_name(Keys,"new_name","12345").
+%update_server_name(Keys,NewName,InstanceId)->
+	
+rs_instance:update_admin_pwd(Keys,"gina123","12345").
+rs_instance:list_flavors(Keys)
+rs_instance:get_flavor_details(Keys,"1").
+
+rs_instance:get_limits(Keys).
+
+IMAGE STUFF
+
+4> rs_image:describe_all(Keys).
+[[{"id","29"},{"name","Windows Server 2003 R2 SP2 x86"}],
+ [{"id","9"},{"name","Arch 2009.02"}],
+ [{"id","13"},{"name","Fedora 11 (Leonidas)"}],
+ [{"id","7"},{"name","CentOS 5.3"}],
+ [{"id","187811"},{"name","CentOS 5.4"}],
+ [{"id","4"},{"name","Debian 5.0 (lenny)"}],
+ [{"id","10"},{"name","Ubuntu 8.04.2 LTS (hardy)"}],
+ [{"id","24"},{"name","Windows Server 2008 SP2 x64"}],
+ [{"id","17"},{"name","Fedora 12 (Constantine)"}],
+ [{"id","23"},{"name","Windows Server 2003 R2 SP2 x64"}],
+ [{"id","49"},{"name","Ubuntu 10.04 LTS (lucid)"}],
+ [{"id","3"},{"name","Gentoo 2008.0"}],
+ [{"id","14362"},{"name","Ubuntu 9.10 (karmic)"}],
+ [{"id","11"},{"name","Ubuntu 8.10 (intrepid)"}],
+ [{"id","8"},{"name","Ubuntu 9.04 (jaunty)"}],
+ [{"id","14"},{"name","Red Hat EL 5.4"}],
+ [{"id","31"},{"name","Windows Server 2008 SP2 x86"}],
+ [{"id","40"},{"name","Oracle EL Server Release 5 Update 4"}],
+ [{"id","28"},{"name","Windows Server 2008 R2 x64"}],
+ [{"id","19"},{"name","Gentoo 10.1"}],
+ [{"id","12"},{"name","Red Hat EL 5.3"}],
+ [{"id","41"},{"name","Oracle EL JeOS Release 5 Update 3"}]]e end.
+    
+rs_image:describe(Keys,"1223").    
+describe(Keys,ImageId).
+
+rs_image:terminate(Keys,"1224")
+terminate(Keys,ImageId).
+
+%{"image" : {"serverId" : 12,"name" : "Just in case"}}
+rs_image:create(Keys,"my image name",12).
+create(Keys,Name,InstanceId).
+
