@@ -232,11 +232,10 @@ parse_describes_detail(Body)->
 	 [clean_address(Z)||Z<-L].
 
 clean_address(Info)->
-	Addr = proplists:get_value("addresses",Info),
-	{_,[{Pb,{_,V}},{Pr,{_,V1}}]}=Addr,
-	NewT = {"addresses",[{Pb,V},{Pr,V1}]},
-	lists:keyreplace("addresses",1,Info,NewT).
-
+	{_,Addr} = proplists:get_value("addresses",Info),
+    NewT = [{K,V}||{K,{_,[V]}}<-Addr],	    
+	lists:keyreplace("addresses",1,Info,{"addresses",NewT}).
+    
 	
 	    
 %drop_empty(I) ->
